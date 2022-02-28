@@ -115,10 +115,26 @@ public class MoveChicken : MonoBehaviour
     return Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2));
   }
 
+    void OnCollisionEnter(Collision collision) {
+        if (collision.collider.CompareTag("Obstacle")) {
+            print("chicken collided with obstacle");
+            StartCoroutine(Slowed());
+        }
+    }
+
   /** Send a raycast to check if player is grounded and returns true if
    the player is on some sort of ground */
   private bool IsGrounded()
   {
     return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.3f);
   }
+    public IEnumerator Slowed() {
+        print("Chicken will slow");
+        MoveScale = 0.1f;
+        print("Chicken slowed");
+        yield return new WaitForSeconds(3);
+        print("waiting");
+        MoveScale = 0.5f; // original 0.5
+        print("Chicken back to normal speed");
+    }
 }

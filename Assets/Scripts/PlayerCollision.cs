@@ -11,6 +11,9 @@ public class PlayerCollision : MonoBehaviour
   public static bool hitFinishLine;
 
   public GameObject camera;
+  public MovePB moveHuman;
+  public MoveChicken moveChicken;
+  public MoveDragon moveDragon;
 
   void Start()
   {

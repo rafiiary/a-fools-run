@@ -105,4 +105,21 @@ public class MovePB : MonoBehaviour
     {
       return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.3f);
     }
+
+    void OnCollisionEnter(Collision collision) {
+        if (collision.collider.CompareTag("Obstacle")) {
+            print("human collided with obstacle");
+            StartCoroutine(Slowed());
+        }
+    }
+
+    public IEnumerator Slowed() {
+        print("Human will slow");
+        MoveScale = 0.1f;
+        print("Human slowed");
+        yield return new WaitForSeconds(3);
+        print("waiting");
+        MoveScale = 0.5f; // original 0.5
+        print("Human back to normal speed");
+    }
 }

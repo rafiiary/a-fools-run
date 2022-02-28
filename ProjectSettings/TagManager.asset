@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Potion
   - FinishLine
+  - Obstacle
   layers:
   - Default
   - TransparentFX
