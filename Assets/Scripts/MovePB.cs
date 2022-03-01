@@ -39,18 +39,16 @@ public class MovePB : MonoBehaviour
     bool jumping;
     bool sprinting;
 
-    void Start()
-    {
+    void Start() {
         HumanRigidbody = GetComponent<Rigidbody>();
         HumanTransform = GetComponent<Transform>();
+        CameraTransform = MainCamera.GetComponent<Transform>();
         Animator = GetComponent<Animator>();
         distanceToGround = GetComponent<Collider>().bounds.extents.y;
         // StartCoroutine(printStates());
-        CameraTransform = MainCamera.GetComponent<Transform>();
     }
 
-    void Update()
-    {
+    void Update() {
         // get keyboard inputs
         wsInput = Input.GetAxis("Vertical");
         adInput = Input.GetAxis("Horizontal");
@@ -61,12 +59,11 @@ public class MovePB : MonoBehaviour
                           Input.GetKey("a") || Input.GetKey("d") ||
                           Input.GetKey("up") || Input.GetKey("down");
         isGrounded = IsGrounded();
-        jumping  = Input.GetKey("space");
+        jumping = Input.GetKey("space");
         sprinting = Input.GetKey(KeyCode.LeftShift);
     }
 
-    private void FixedUpdate()
-    {
+    private void FixedUpdate() {
         // decide which direction should the character go (according to camera heading)
         userRotation = HumanTransform.rotation.eulerAngles;
         cameraRotation = CameraTransform.rotation.eulerAngles;
@@ -154,22 +151,18 @@ public class MovePB : MonoBehaviour
         Animator.SetBool("isRunning", sprinting);
         Animator.SetBool("isIdle", !movingForward && isGrounded);
 
-        // Only able to jump if you are on the ground
-        if (isGrounded && userJumped)
-        {
-          HumanRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
+        // only able to jump if you are on the ground
+        if (isGrounded && userJumped) {
+            HumanRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
         }
     }
 
     IEnumerator printStates() {
         var norm = euclideanNorm(HumanRigidbody.velocity.x, HumanRigidbody.velocity.z);
-        if (norm != 0)
-        {
+        if (norm != 0) {
             print("walking...");
             print($"velocity: {norm}");
-        }
-        else
-        {
+        } else {
             print("idle...");
         }
         yield return new WaitForSeconds(5);
@@ -177,14 +170,13 @@ public class MovePB : MonoBehaviour
 
     /** Return the euclidean norm of x and y */
     private float euclideanNorm (float x, float y) {
-      return Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2));
+        return Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2));
     }
 
     /** Send a raycast to check if player is grounded and returns true if
      the player is on some sort of ground */
-    private bool IsGrounded()
-    {
-      return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.3f);
+    private bool IsGrounded() {
+        return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.3f);
     }
 
     void OnCollisionEnter(Collision collision) {

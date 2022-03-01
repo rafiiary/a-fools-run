@@ -24864,6 +24864,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d5218ffe72d2fa4fa298e5aa76292d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainCamera: {fileID: 66241055}
+  CameraTransform: {fileID: 0}
 --- !u!54 &919132148059225081
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -25026,6 +25028,10 @@ PrefabInstance:
       propertyPath: m_Avatar
       value: 
       objectReference: {fileID: 9000000, guid: c491e7a3720a53c4a9e14ba3a06df5ad, type: 3}
+    - target: {fileID: 5253050476075507627, guid: d8350b694559f3b4bb5d9af47b56c43e, type: 3}
+      propertyPath: MainCamera
+      value: 
+      objectReference: {fileID: 66241055}
     - target: {fileID: 8448564011576739926, guid: d8350b694559f3b4bb5d9af47b56c43e, type: 3}
       propertyPath: m_RootOrder
       value: 4

@@ -20,8 +20,7 @@ public class GameStatus : MonoBehaviour
     private Rigidbody _rigidbody;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         timeRemainingText = timeRemainingObj.GetComponent<Text>();
         gameStatText = gameStatObj.GetComponent<Text>();
         gameOperText = gameOperObj.GetComponent<Text>();
@@ -31,11 +30,9 @@ public class GameStatus : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         // Check remaining time of this round
-        if (timeLeft > 0)
-        {
+        if (timeLeft > 0) {
             timeLeft -= Time.deltaTime;
         } else {
             PauseGame("lose");
@@ -43,29 +40,23 @@ public class GameStatus : MonoBehaviour
         DisplayTime(timeLeft);
 
         // Check if player has reached end of the maze
-        for (int i=0; i<playerObj.transform.childCount; i++)
-        {
+        for (int i=0; i<playerObj.transform.childCount; i++) {
             GameObject childObj = playerObj.transform.GetChild(i).gameObject;
-            if (PlayerCollision.hitFinishLine)
-            {
+            if (PlayerCollision.hitFinishLine) {
                 winStat = true;
             }
         }
-        if (winStat == true)
-        {
+        if (winStat == true) {
             PauseGame("win");
         }
 
         // Detect input about pause and resume
-        if (Input.GetKeyDown(KeyCode.P))
-        {
+        if (Input.GetKeyDown(KeyCode.P)) {
             PauseGame("pause");
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            if (timeLeft > 0 & winStat == false)
-            {
+        if (Input.GetKeyDown(KeyCode.R)) {
+            if (timeLeft > 0 & winStat == false) {
                 ResumeGame();
             } else {
                 RestartGame();
@@ -73,10 +64,8 @@ public class GameStatus : MonoBehaviour
         }
     }
 
-    void DisplayTime(float time)
-    {
-        if (time < 0)
-        {
+    void DisplayTime(float time) {
+        if (time < 0) {
             time = 0;
         } else {
             float minutes = Mathf.FloorToInt(time / 60);
@@ -85,12 +74,10 @@ public class GameStatus : MonoBehaviour
         }
     }
 
-    public void PauseGame(string type)
-    {
+    public void PauseGame(string type) {
         Time.timeScale = 0;
 
-        if (type == "pause")
-        {
+        if (type == "pause") {
             DisplayMessage(gameStatText, "Game Paused");
             DisplayMessage(gameOperText, "Resume");
         } else if (type == "lose") {
@@ -102,15 +89,13 @@ public class GameStatus : MonoBehaviour
         }
     }
 
-    public void ResumeGame()
-    {
+    public void ResumeGame() {
         Time.timeScale = 1;
         gameStatText.text = "";
         gameOperText.text = "";
     }
 
-    public void RestartGame()
-    {
+    public void RestartGame() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Time.timeScale = 1;
         gameStatText.text = "";
@@ -118,30 +103,18 @@ public class GameStatus : MonoBehaviour
         winStat = false;
     }
 
-    void DisplayMessage(Text textArea, string message)
-    {
-        if (message == "Game Over!")
-        {
+    public void DisplayMessage(Text textArea, string message) {
+        if (message == "Game Over!") {
             textArea.text = "Game Over!";
-        }
-        else if (message == "Game Paused")
-        {
+        } else if (message == "Game Paused") {
             textArea.text = "Game Paused";
-        }
-        else if (message == "Resume")
-        {
+        } else if (message == "Resume") {
             textArea.text = "Resume";
-        }
-        else if (message == "You Win!")
-        {
+        } else if (message == "You Win!") {
             textArea.text = "You Win!";
-        }
-        else if (message == "Restart")
-        {
+        } else if (message == "Restart") {
             textArea.text = "Restart";
-        }
-        else
-        {
+        } else {
             textArea.text = "ERROR: Unknown input!";
         }
     }
