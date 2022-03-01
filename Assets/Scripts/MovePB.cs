@@ -7,6 +7,7 @@ public class MovePB : MonoBehaviour
     // user inputs
     private float _playerInput;
     private float _rotationInput;
+    private float inputScale;
 
     // camera and character heading related
     public GameObject MainCamera;
@@ -69,37 +70,73 @@ public class MovePB : MonoBehaviour
         // decide which direction should the character go (according to camera heading)
         _userRot = _transform.rotation.eulerAngles;
         _cameraRot = CameraTransform.rotation.eulerAngles;
-        if (Input.GetKey("a")) {
-            _userRot[1] = _cameraRot[1];
-            _userRot += new Vector3(0, -90, 0);
-            heading = _transform.forward;
-        } else if (Input.GetKey("d")) {
+        inputScale = 0;
+        
+        // move 90 degrees right (press only "D" or "D" + "W" + "S")
+        if ((Input.GetKey("d") && !Input.GetKey("w") && !Input.GetKey("s")) || (Input.GetKey("d") && Input.GetKey("w") && Input.GetKey("s"))) {
             _userRot[1] = _cameraRot[1];
             _userRot += new Vector3(0, 90, 0);
             heading = _transform.forward;
-        } else if (Input.GetKey("w")) {
+            inputScale = Mathf.Abs(_rotationInput);
+
+        // move 90 degrees left (press only "A" or "A" + "W" + "S")
+        } else if ((Input.GetKey("a") && !Input.GetKey("w") && !Input.GetKey("s")) || (Input.GetKey("a") && Input.GetKey("w") && Input.GetKey("s"))) {
+            _userRot[1] = _cameraRot[1];
+            _userRot += new Vector3(0, -90, 0);
+            heading = _transform.forward;
+            inputScale = Mathf.Abs(_rotationInput);
+
+        // move 0 degree forward (press only "W" or "W" + "A" + "D")
+        } else if ((Input.GetKey("w") && !Input.GetKey("a") && !Input.GetKey("d")) || (Input.GetKey("w") && Input.GetKey("a") && Input.GetKey("d"))) {
             _userRot[1] = _cameraRot[1];
             heading = _transform.forward;
-        } else if (Input.GetKey("s")) {
+            inputScale = Mathf.Abs(_playerInput);
+
+        // move 180 degrees backward (press only "S" or "S" + "A" + "D")
+        } else if ((Input.GetKey("s") && !Input.GetKey("a") && !Input.GetKey("d")) || (Input.GetKey("s") && Input.GetKey("a") && Input.GetKey("d"))) {
             _userRot[1] = _cameraRot[1];
             _userRot += new Vector3(0, 180, 0);
             heading = _transform.forward;
-        }
-        
-        // rotate character to the right direction
-        _transform.rotation = Quaternion.Euler(_userRot);
-
-        //heading = new Vector3(Mathf.Abs(heading.x), Mathf.Abs(heading.y), Mathf.Abs(heading.z));
-        float inputScale = 0;
-        if (_playerInput != 0 && _rotationInput > 0) {
-            inputScale = (Mathf.Abs(_playerInput) + Mathf.Abs(_rotationInput)) / 2.0f;
-        } else if (_playerInput != 0 && _rotationInput == 0) {
             inputScale = Mathf.Abs(_playerInput);
-        } else if (_playerInput == 0 && _rotationInput != 0) {
-            inputScale = Mathf.Abs(_rotationInput);
+        
+        // move 45 degrees right (press "W" + "D")
+        } else if (Input.GetKey("w") && Input.GetKey("d")) {
+            _userRot[1] = _cameraRot[1];
+            _userRot += new Vector3(0, 45, 0);
+            heading = _transform.forward;
+            inputScale = (Mathf.Abs(_playerInput) + Mathf.Abs(_rotationInput)) / 2.0f;
+
+        // move 45 degrees left (press "W" + "A")
+        } else if (Input.GetKey("w") && Input.GetKey("a")) {
+            _userRot[1] = _cameraRot[1];
+            _userRot += new Vector3(0, -45, 0);
+            heading = _transform.forward;
+            inputScale = (Mathf.Abs(_playerInput) + Mathf.Abs(_rotationInput)) / 2.0f;
+
+        // move 135 degrees right (press "S" + "D")
+        } else if (Input.GetKey("s") && Input.GetKey("d")) {
+            Debug.Log("135 right!!!!!");
+            _userRot[1] = _cameraRot[1];
+            _userRot += new Vector3(0, 135, 0);
+            heading = _transform.forward;
+            inputScale = (Mathf.Abs(_playerInput) + Mathf.Abs(_rotationInput)) / 2.0f;
+
+        // move 135 degrees left (press "S" + "A")
+        } else if (Input.GetKey("s") && Input.GetKey("a")) {
+            Debug.Log("135 left!!!!!");
+            _userRot[1] = _cameraRot[1];
+            _userRot += new Vector3(0, -135, 0);
+            heading = _transform.forward;
+            inputScale = (Mathf.Abs(_playerInput) + Mathf.Abs(_rotationInput)) / 2.0f;
+
+        // stand still
         } else {
             inputScale = 0;
         }
+        
+        // rotate character to the right direction
+        //_transform.rotation = Quaternion.Euler(_userRot);
+        _transform.rotation = Quaternion.Lerp(_transform.rotation, Quaternion.Euler(_userRot), 0.3f);
 
         // let the character go forward
         if (sprinting)
@@ -114,7 +151,7 @@ public class MovePB : MonoBehaviour
         // perform animations
         animator.SetBool("isWalking", moving_forward);
         animator.SetBool("isJumping", jumping);
-        animator.SetBool("IsGrounded", is_grounded);
+        animator.SetBool("isGrounded", is_grounded);
         animator.SetBool("isRunning", sprinting);
         animator.SetBool("isIdle", !moving_forward && is_grounded);
 
