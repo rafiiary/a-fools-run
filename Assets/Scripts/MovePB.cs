@@ -5,45 +5,45 @@ using UnityEngine;
 public class MovePB : MonoBehaviour
 {
     // user inputs
-    private float _playerInput;
-    private float _rotationInput;
+    private float wsInput;
+    private float adInput;
     private float inputScale;
 
     // camera and character heading related
     public GameObject MainCamera;
     public Transform CameraTransform;
-    private Vector3 _userRot;
-    private Vector3 _cameraRot;
+    private Vector3 userRotation;
+    private Vector3 cameraRotation;
     private Vector3 heading;
 
     // tune sensitivity of controls
-    // original mass, drag, angularDrag: 1, 2, 0.05;
-    private float MoveScale = 0.5f; // original 0.5
-    private const float RotateScale = 3.0f; // original 1.0
-    private const float JumpMultiplier = 4.0f; // original 1.6
-    private const float MaxSpeed = 5.0f;
+    // original mass, drag, angularDrag: 1, 2, 0.05
+    private float moveScale = 0.5f; // original 0.5
+    private float rotateScale = 3.0f; // unused
+    private float jumpScale = 4.0f; // original 1.6
+    private const float maxSpeed = 5.0f; // unused
 
     // jump limiter
-    private bool _userJumped;
-    private bool _jumpInProgress = false;
+    private bool userJumped;
+    private bool jumpInProgress = false; // unused
     private float distanceToGround;
 
     // model components
-    private Rigidbody _rigidbody;
-    private Transform _transform;
+    private Rigidbody HumanRigidbody;
+    private Transform HumanTransform;
 
     // animation related
-    Animator animator;
-    bool moving_forward;
-    bool is_grounded;
+    Animator Animator;
+    bool movingForward;
+    bool isGrounded;
     bool jumping;
     bool sprinting;
 
     void Start()
     {
-        _rigidbody = GetComponent<Rigidbody>();
-        _transform = GetComponent<Transform>();
-        animator = GetComponent<Animator>();
+        HumanRigidbody = GetComponent<Rigidbody>();
+        HumanTransform = GetComponent<Transform>();
+        Animator = GetComponent<Animator>();
         distanceToGround = GetComponent<Collider>().bounds.extents.y;
         // StartCoroutine(printStates());
         CameraTransform = MainCamera.GetComponent<Transform>();
@@ -52,15 +52,15 @@ public class MovePB : MonoBehaviour
     void Update()
     {
         // get keyboard inputs
-        _playerInput = Input.GetAxis("Vertical");
-        _rotationInput = Input.GetAxis("Horizontal");
-        _userJumped = Input.GetButton("Jump");
+        wsInput = Input.GetAxis("Vertical");
+        adInput = Input.GetAxis("Horizontal");
+        userJumped = Input.GetButton("Jump");
 
         // play animations according to keyboard inputs
-        moving_forward = Input.GetKey("w") || Input.GetKey("s") ||
+        movingForward = Input.GetKey("w") || Input.GetKey("s") ||
                           Input.GetKey("a") || Input.GetKey("d") ||
                           Input.GetKey("up") || Input.GetKey("down");
-        is_grounded = IsGrounded();
+        isGrounded = IsGrounded();
         jumping  = Input.GetKey("space");
         sprinting = Input.GetKey(KeyCode.LeftShift);
     }
@@ -68,66 +68,66 @@ public class MovePB : MonoBehaviour
     private void FixedUpdate()
     {
         // decide which direction should the character go (according to camera heading)
-        _userRot = _transform.rotation.eulerAngles;
-        _cameraRot = CameraTransform.rotation.eulerAngles;
+        userRotation = HumanTransform.rotation.eulerAngles;
+        cameraRotation = CameraTransform.rotation.eulerAngles;
         inputScale = 0;
         
         // move 90 degrees right (press only "D" or "D" + "W" + "S")
         if ((Input.GetKey("d") && !Input.GetKey("w") && !Input.GetKey("s")) || (Input.GetKey("d") && Input.GetKey("w") && Input.GetKey("s"))) {
-            _userRot[1] = _cameraRot[1];
-            _userRot += new Vector3(0, 90, 0);
-            heading = _transform.forward;
-            inputScale = Mathf.Abs(_rotationInput);
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, 90, 0);
+            heading = HumanTransform.forward;
+            inputScale = Mathf.Abs(adInput);
 
         // move 90 degrees left (press only "A" or "A" + "W" + "S")
         } else if ((Input.GetKey("a") && !Input.GetKey("w") && !Input.GetKey("s")) || (Input.GetKey("a") && Input.GetKey("w") && Input.GetKey("s"))) {
-            _userRot[1] = _cameraRot[1];
-            _userRot += new Vector3(0, -90, 0);
-            heading = _transform.forward;
-            inputScale = Mathf.Abs(_rotationInput);
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, -90, 0);
+            heading = HumanTransform.forward;
+            inputScale = Mathf.Abs(adInput);
 
         // move 0 degree forward (press only "W" or "W" + "A" + "D")
         } else if ((Input.GetKey("w") && !Input.GetKey("a") && !Input.GetKey("d")) || (Input.GetKey("w") && Input.GetKey("a") && Input.GetKey("d"))) {
-            _userRot[1] = _cameraRot[1];
-            heading = _transform.forward;
-            inputScale = Mathf.Abs(_playerInput);
+            userRotation[1] = cameraRotation[1];
+            heading = HumanTransform.forward;
+            inputScale = Mathf.Abs(wsInput);
 
         // move 180 degrees backward (press only "S" or "S" + "A" + "D")
         } else if ((Input.GetKey("s") && !Input.GetKey("a") && !Input.GetKey("d")) || (Input.GetKey("s") && Input.GetKey("a") && Input.GetKey("d"))) {
-            _userRot[1] = _cameraRot[1];
-            _userRot += new Vector3(0, 180, 0);
-            heading = _transform.forward;
-            inputScale = Mathf.Abs(_playerInput);
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, 180, 0);
+            heading = HumanTransform.forward;
+            inputScale = Mathf.Abs(wsInput);
         
         // move 45 degrees right (press "W" + "D")
         } else if (Input.GetKey("w") && Input.GetKey("d")) {
-            _userRot[1] = _cameraRot[1];
-            _userRot += new Vector3(0, 45, 0);
-            heading = _transform.forward;
-            inputScale = (Mathf.Abs(_playerInput) + Mathf.Abs(_rotationInput)) / 2.0f;
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, 45, 0);
+            heading = HumanTransform.forward;
+            inputScale = (Mathf.Abs(wsInput) + Mathf.Abs(adInput)) / 2.0f;
 
         // move 45 degrees left (press "W" + "A")
         } else if (Input.GetKey("w") && Input.GetKey("a")) {
-            _userRot[1] = _cameraRot[1];
-            _userRot += new Vector3(0, -45, 0);
-            heading = _transform.forward;
-            inputScale = (Mathf.Abs(_playerInput) + Mathf.Abs(_rotationInput)) / 2.0f;
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, -45, 0);
+            heading = HumanTransform.forward;
+            inputScale = (Mathf.Abs(wsInput) + Mathf.Abs(adInput)) / 2.0f;
 
         // move 135 degrees right (press "S" + "D")
         } else if (Input.GetKey("s") && Input.GetKey("d")) {
             Debug.Log("135 right!!!!!");
-            _userRot[1] = _cameraRot[1];
-            _userRot += new Vector3(0, 135, 0);
-            heading = _transform.forward;
-            inputScale = (Mathf.Abs(_playerInput) + Mathf.Abs(_rotationInput)) / 2.0f;
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, 135, 0);
+            heading = HumanTransform.forward;
+            inputScale = (Mathf.Abs(wsInput) + Mathf.Abs(adInput)) / 2.0f;
 
         // move 135 degrees left (press "S" + "A")
         } else if (Input.GetKey("s") && Input.GetKey("a")) {
             Debug.Log("135 left!!!!!");
-            _userRot[1] = _cameraRot[1];
-            _userRot += new Vector3(0, -135, 0);
-            heading = _transform.forward;
-            inputScale = (Mathf.Abs(_playerInput) + Mathf.Abs(_rotationInput)) / 2.0f;
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, -135, 0);
+            heading = HumanTransform.forward;
+            inputScale = (Mathf.Abs(wsInput) + Mathf.Abs(adInput)) / 2.0f;
 
         // stand still
         } else {
@@ -135,35 +135,34 @@ public class MovePB : MonoBehaviour
         }
         
         // rotate character to the right direction
-        //_transform.rotation = Quaternion.Euler(_userRot);
-        _transform.rotation = Quaternion.Lerp(_transform.rotation, Quaternion.Euler(_userRot), 0.3f);
+        HumanTransform.rotation = Quaternion.Lerp(HumanTransform.rotation, Quaternion.Euler(userRotation), 0.3f);
 
         // let the character go forward
         if (sprinting)
         {
-            _rigidbody.velocity += heading * inputScale * MoveScale * 1.5f;
+            HumanRigidbody.velocity += heading * inputScale * moveScale * 1.5f;
         }
         else
         {
-            _rigidbody.velocity += heading * inputScale * MoveScale;
+            HumanRigidbody.velocity += heading * inputScale * moveScale;
         }
 
         // perform animations
-        animator.SetBool("isWalking", moving_forward);
-        animator.SetBool("isJumping", jumping);
-        animator.SetBool("isGrounded", is_grounded);
-        animator.SetBool("isRunning", sprinting);
-        animator.SetBool("isIdle", !moving_forward && is_grounded);
+        Animator.SetBool("isWalking", movingForward);
+        Animator.SetBool("isJumping", jumping);
+        Animator.SetBool("isGrounded", isGrounded);
+        Animator.SetBool("isRunning", sprinting);
+        Animator.SetBool("isIdle", !movingForward && isGrounded);
 
         // Only able to jump if you are on the ground
-        if (is_grounded && _userJumped)
+        if (isGrounded && userJumped)
         {
-          _rigidbody.AddForce(Vector3.up * JumpMultiplier, ForceMode.Impulse);
+          HumanRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
         }
     }
 
     IEnumerator printStates() {
-        var norm = euclideanNorm(_rigidbody.velocity.x, _rigidbody.velocity.z);
+        var norm = euclideanNorm(HumanRigidbody.velocity.x, HumanRigidbody.velocity.z);
         if (norm != 0)
         {
             print("walking...");
@@ -197,11 +196,11 @@ public class MovePB : MonoBehaviour
 
     public IEnumerator Slowed() {
         print("Human will slow");
-        MoveScale = 0.1f;
+        moveScale = 0.1f;
         print("Human slowed");
         yield return new WaitForSeconds(3);
         print("waiting");
-        MoveScale = 0.5f; // original 0.5
+        moveScale = 0.5f; // original 0.5
         print("Human back to normal speed");
     }
 }
