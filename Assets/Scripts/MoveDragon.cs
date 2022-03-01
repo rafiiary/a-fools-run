@@ -90,4 +90,21 @@ public class MoveDragon : MonoBehaviour
       {
         return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.0f);
       }
+
+    void OnCollisionEnter(Collision collision) {
+        if (collision.collider.CompareTag("Obstacle")) {
+            print("dragon collided with obstacle");
+            StartCoroutine(Slowed());
+        }
+    }
+
+    public IEnumerator Slowed() {
+        print("Dragon will slow");
+        MoveScale = 0.1f;
+        print("Dragon slowed");
+        yield return new WaitForSeconds(3);
+        print("waiting");
+        MoveScale = 0.5f; // original 0.5
+        print("Dragon back to normal speed");
+    }
 }
