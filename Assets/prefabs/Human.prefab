@@ -63,6 +63,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c58eef20609f245bfded0650fa12ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainCamera: {fileID: 0}
+  CameraTransform: {fileID: 0}
+  PlatformLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  HumanCollider: {fileID: 0}
 --- !u!95 &8536502824107370900
 Animator:
   serializedVersion: 3
@@ -96,7 +102,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character1: {fileID: 0}
   character2: {fileID: 7074349349627482805}
+  character3: {fileID: 0}
   hitpotion: {fileID: 0}
+  camera: {fileID: 0}
+  moveHuman: {fileID: 0}
+  moveChicken: {fileID: 0}
+  moveDragon: {fileID: 0}
 --- !u!1001 &5221718719275777032
 PrefabInstance:
   m_ObjectHideFlags: 0
