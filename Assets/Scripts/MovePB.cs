@@ -32,6 +32,9 @@ public class MovePB : MonoBehaviour
     private Rigidbody HumanRigidbody;
     private Transform HumanTransform;
 
+    // Colliders
+    public Collider normalCollider;
+
     // animation related
     Animator Animator;
     bool movingForward;
@@ -45,7 +48,7 @@ public class MovePB : MonoBehaviour
         HumanTransform = GetComponent<Transform>();
         CameraTransform = MainCamera.GetComponent<Transform>();
         Animator = GetComponent<Animator>();
-        distanceToGround = GetComponent<Collider>().bounds.extents.y;
+        distanceToGround = normalCollider.bounds.extents.y;
         hasFallen = false;
         // StartCoroutine(printStates());
     }
@@ -63,6 +66,7 @@ public class MovePB : MonoBehaviour
         isGrounded = IsGrounded();
         jumping = Input.GetKey("space");
         sprinting = Input.GetKey(KeyCode.LeftShift);
+
     }
 
     private void FixedUpdate() {
