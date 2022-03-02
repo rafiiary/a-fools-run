@@ -4,92 +4,163 @@ using UnityEngine;
 
 public class MoveDragon : MonoBehaviour
 {
-      private float _playerInput;
-      private float _rotationInput;
-      private Vector3 _userRot;
-      private bool _userJumped;
-      private bool _jumpInProgress = false;
+    // user inputs
+    private float wsInput;
+    private float adInput;
+    private float inputScale;
 
-      // original mass, drag, angularDrag: 1, 2, 0.05;
-      private float MoveScale = 0.5f; // original 0.5
-      private const float RotateScale = 3.0f; // original 1.0
-      private float distanceToGround;
-      private const float JumpMultiplier = 8.0f; // original 1.6
-      private const float MaxSpeed = 5.0f;
+    // camera and character heading related
+    public GameObject MainCamera;
+    public Transform CameraTransform;
+    private Vector3 userRotation;
+    private Vector3 cameraRotation;
+    private Vector3 heading;
 
-      private Rigidbody _rigidbody;
-      private Transform _transform;
+    // tune sensitivity of controls
+    // original mass, drag, angularDrag: 1, 2, 0.05
+    private float moveScale = 0.5f; // original 0.5
+    private float rotateScale = 3.0f; // unused
+    private float jumpScale = 4.0f; // original 1.6
+    private const float maxSpeed = 5.0f; // unused
 
-      Animator animator;
+    // jump limiter
+    private bool userJumped;
+    private bool jumpInProgress = false; // unused
+    private float distanceToGround;
+      
+    // model components
+    private Rigidbody DragonRigidbody;
+    private Transform DragonTransform;
 
-      void Start()
-      {
-          _rigidbody = GetComponent<Rigidbody>();
-          _transform = GetComponent<Transform>();
-          animator = GetComponent<Animator>();
-          distanceToGround = GetComponent<Collider>().bounds.extents.y;
-          // StartCoroutine(printStates());
-      }
+    // animation related
+    Animator Animator;
 
-      void Update()
-      {
-          _playerInput = Input.GetAxis("Vertical");
-          _rotationInput = Input.GetAxis("Horizontal");
-          _userJumped = Input.GetButton("Jump");
-      }
+    void Start() {
+        DragonRigidbody = GetComponent<Rigidbody>();
+        DragonTransform = GetComponent<Transform>();
+        CameraTransform = MainCamera.GetComponent<Transform>();
+        Animator = GetComponent<Animator>();
+        distanceToGround = GetComponent<Collider>().bounds.extents.y;
+        // StartCoroutine(printStates());
+    }
 
-      private void FixedUpdate()
-      {
-          _userRot = _transform.rotation.eulerAngles;
-          _userRot += new Vector3(0, _rotationInput * RotateScale, 0);
+    void Update() {
+        // get keyboard inputs
+        wsInput = Input.GetAxis("Vertical");
+        adInput = Input.GetAxis("Horizontal");
+        userJumped = Input.GetButton("Jump");
+    }
 
-          _transform.rotation = Quaternion.Euler(_userRot);
+    private void FixedUpdate() {
+        // decide which direction should the character go (according to camera heading)
+        userRotation = DragonTransform.rotation.eulerAngles;
+        cameraRotation = CameraTransform.rotation.eulerAngles;
+        inputScale = 0;
+        
+        // move 90 degrees right (press only "D" or "D" + "W" + "S")
+        if ((Input.GetKey("d") && !Input.GetKey("w") && !Input.GetKey("s")) || (Input.GetKey("d") && Input.GetKey("w") && Input.GetKey("s"))) {
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, 90, 0);
+            heading = DragonTransform.forward;
+            inputScale = Mathf.Abs(adInput);
 
-          // Up is always y so velocity of x and z is clamped down
-          var norm = euclideanNorm(_rigidbody.velocity.x, _rigidbody.velocity.z);
-          _rigidbody.velocity += transform.forward * _playerInput * MoveScale;
-          animator.SetFloat("velocity", norm);
-          if (norm != 0 && IsGrounded())
-          {
-              animator.SetTrigger("triggerWalking");
-          }
-          else
-          {
-              animator.SetTrigger("triggerIdle");
-          }
+        // move 90 degrees left (press only "A" or "A" + "W" + "S")
+        } else if ((Input.GetKey("a") && !Input.GetKey("w") && !Input.GetKey("s")) || (Input.GetKey("a") && Input.GetKey("w") && Input.GetKey("s"))) {
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, -90, 0);
+            heading = DragonTransform.forward;
+            inputScale = Mathf.Abs(adInput);
 
-          // Only able to jump if you are on the ground
-          if (IsGrounded() && _userJumped)
-          {
-            _rigidbody.AddForce(Vector3.up * JumpMultiplier, ForceMode.Impulse);
-          }
-      }
+        // move 0 degree forward (press only "W" or "W" + "A" + "D")
+        } else if ((Input.GetKey("w") && !Input.GetKey("a") && !Input.GetKey("d")) || (Input.GetKey("w") && Input.GetKey("a") && Input.GetKey("d"))) {
+            userRotation[1] = cameraRotation[1];
+            heading = DragonTransform.forward;
+            inputScale = Mathf.Abs(wsInput);
 
-      IEnumerator printStates() {
-          var norm = euclideanNorm(_rigidbody.velocity.x, _rigidbody.velocity.z);
-          if (norm != 0)
-          {
-              print("walking...");
-              print($"velocity: {norm}");
-          }
-          else
-          {
-              print("idle...");
-          }
-          yield return new WaitForSeconds(5);
-      }
+        // move 180 degrees backward (press only "S" or "S" + "A" + "D")
+        } else if ((Input.GetKey("s") && !Input.GetKey("a") && !Input.GetKey("d")) || (Input.GetKey("s") && Input.GetKey("a") && Input.GetKey("d"))) {
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, 180, 0);
+            heading = DragonTransform.forward;
+            inputScale = Mathf.Abs(wsInput);
+        
+        // move 45 degrees right (press "W" + "D")
+        } else if (Input.GetKey("w") && Input.GetKey("d")) {
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, 45, 0);
+            heading = DragonTransform.forward;
+            inputScale = (Mathf.Abs(wsInput) + Mathf.Abs(adInput)) / 2.0f;
 
-      /** Return the euclidean norm of x and y */
-      private float euclideanNorm (float x, float y) {
+        // move 45 degrees left (press "W" + "A")
+        } else if (Input.GetKey("w") && Input.GetKey("a")) {
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, -45, 0);
+            heading = DragonTransform.forward;
+            inputScale = (Mathf.Abs(wsInput) + Mathf.Abs(adInput)) / 2.0f;
+
+        // move 135 degrees right (press "S" + "D")
+        } else if (Input.GetKey("s") && Input.GetKey("d")) {
+            Debug.Log("135 right!!!!!");
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, 135, 0);
+            heading = DragonTransform.forward;
+            inputScale = (Mathf.Abs(wsInput) + Mathf.Abs(adInput)) / 2.0f;
+
+        // move 135 degrees left (press "S" + "A")
+        } else if (Input.GetKey("s") && Input.GetKey("a")) {
+            Debug.Log("135 left!!!!!");
+            userRotation[1] = cameraRotation[1];
+            userRotation += new Vector3(0, -135, 0);
+            heading = DragonTransform.forward;
+            inputScale = (Mathf.Abs(wsInput) + Mathf.Abs(adInput)) / 2.0f;
+
+        // stand still
+        } else {
+            inputScale = 0;
+        }
+        
+        // rotate character to the right direction
+        DragonTransform.rotation = Quaternion.Lerp(DragonTransform.rotation, Quaternion.Euler(userRotation), 0.3f);
+
+        // let the character go forward
+        DragonRigidbody.velocity += heading * inputScale * moveScale;
+        
+        // perform animations
+        var norm = euclideanNorm(DragonRigidbody.velocity.x, DragonRigidbody.velocity.z);
+        Animator.SetFloat("velocity", norm);
+        if (norm != 0 && IsGrounded()) {
+            Animator.SetTrigger("triggerWalking");
+        } else {
+            Animator.SetTrigger("triggerIdle");
+        }
+
+        // Only able to jump if you are on the ground
+        if (IsGrounded() && userJumped) {
+            DragonRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
+        }
+    }
+
+    IEnumerator printStates() {
+        var norm = euclideanNorm(DragonRigidbody.velocity.x, DragonRigidbody.velocity.z);
+        if (norm != 0) {
+            print("walking...");
+            print($"velocity: {norm}");
+        } else {
+            print("idle...");
+        }
+        yield return new WaitForSeconds(5);
+    }
+
+    /** Return the euclidean norm of x and y */
+    private float euclideanNorm (float x, float y) {
         return Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2));
-      }
+    }
 
-      /** Send a raycast to check if player is grounded and returns true if
-       the player is on some sort of ground */
-      private bool IsGrounded()
-      {
+    /** Send a raycast to check if player is grounded and returns true if
+    the player is on some sort of ground */
+    private bool IsGrounded() {
         return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.0f);
-      }
+    }
 
     void OnCollisionEnter(Collision collision) {
         if (collision.collider.CompareTag("Obstacle")) {
@@ -100,11 +171,11 @@ public class MoveDragon : MonoBehaviour
 
     public IEnumerator Slowed() {
         print("Dragon will slow");
-        MoveScale = 0.1f;
+        moveScale = 0.1f;
         print("Dragon slowed");
         yield return new WaitForSeconds(3);
         print("waiting");
-        MoveScale = 0.5f; // original 0.5
+        moveScale = 0.5f; // original 0.5
         print("Dragon back to normal speed");
     }
 }
