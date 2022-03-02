@@ -19,13 +19,12 @@ public class MovePB : MonoBehaviour
     // tune sensitivity of controls
     // original mass, drag, angularDrag: 1, 2, 0.05
     private float moveScale = 0.5f; // original 0.5
-    private float rotateScale = 3.0f; // unused
-    private float jumpScale = 4.0f; // original 1.6
-    private const float maxSpeed = 5.0f; // unused
+    private float jumpScale = 8.0f; // original 4.0 (using AddForce)
 
     // jump limiter
+    [SerializeField] private LayerMask PlatformLayerMask;
+    public Collider HumanCollider;
     private bool userJumped;
-    private bool jumpInProgress = false; // unused
     private float distanceToGround;
 
     // model components
@@ -48,6 +47,7 @@ public class MovePB : MonoBehaviour
         HumanTransform = GetComponent<Transform>();
         CameraTransform = MainCamera.GetComponent<Transform>();
         Animator = GetComponent<Animator>();
+        HumanCollider = normalCollider;
         distanceToGround = normalCollider.bounds.extents.y;
         hasFallen = false;
         // StartCoroutine(printStates());
@@ -128,7 +128,6 @@ public class MovePB : MonoBehaviour
 
           // move 135 degrees right (press "S" + "D")
           } else if (Input.GetKey("s") && Input.GetKey("d")) {
-              Debug.Log("135 right!!!!!");
               userRotation[1] = cameraRotation[1];
               userRotation += new Vector3(0, 135, 0);
               heading = HumanTransform.forward;
@@ -136,7 +135,6 @@ public class MovePB : MonoBehaviour
 
           // move 135 degrees left (press "S" + "A")
           } else if (Input.GetKey("s") && Input.GetKey("a")) {
-              Debug.Log("135 left!!!!!");
               userRotation[1] = cameraRotation[1];
               userRotation += new Vector3(0, -135, 0);
               heading = HumanTransform.forward;
@@ -152,19 +150,16 @@ public class MovePB : MonoBehaviour
         HumanTransform.rotation = Quaternion.Lerp(HumanTransform.rotation, Quaternion.Euler(userRotation), 0.3f);
 
         // let the character go forward
-        if (sprinting)
-        {
+        if (sprinting) {
             HumanRigidbody.velocity += heading * inputScale * moveScale * 1.5f;
-        }
-        else
-        {
+        } else {
             HumanRigidbody.velocity += heading * inputScale * moveScale;
         }
 
 
         // only able to jump if you are on the ground
         if (isGrounded && userJumped) {
-            HumanRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
+            HumanRigidbody.velocity = Vector3.up * jumpScale;
         }
     }
 
@@ -187,10 +182,25 @@ public class MovePB : MonoBehaviour
     /** Send a raycast to check if player is grounded and returns true if
      the player is on some sort of ground */
     private bool IsGrounded() {
-        return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.3f);
+        // boxcast not working now
+        // float extraHeight = 0.05f;
+        // bool hitGround = Physics.BoxCast(HumanCollider.bounds.center, HumanTransform.lossyScale, HumanTransform.up * -1, Quaternion.Euler(Vector3.zero), HumanTransform.lossyScale.y + extraHeight);
+        bool hitGround = Physics.Raycast(HumanTransform.position, Vector3.down, distanceToGround - 0.36f);
+
+        /*
+        Color rayColor;
+        if (hitGround) {
+            rayColor = Color.green;
+        } else {
+            rayColor = Color.red;
+        }
+        Debug.DrawRay(HumanTransform.position, Vector3.down * (distanceToGround - 0.36f), rayColor);
+        */
+
+        return hitGround;
     }
 
-    void OnCollisionEnter(Collision collision) {
+    private void OnCollisionEnter(Collision collision) {
         if (collision.collider.CompareTag("Obstacle")) {
             print("human collided with obstacle");
             StartCoroutine(Slowed());

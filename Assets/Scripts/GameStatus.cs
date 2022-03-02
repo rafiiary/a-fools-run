@@ -16,6 +16,7 @@ public class GameStatus : MonoBehaviour
     private Text gameOperText;
 
     public float timeLeft = 90;
+    public Slider slider;
     public bool winStat = false;
     private Rigidbody _rigidbody;
 
@@ -27,6 +28,7 @@ public class GameStatus : MonoBehaviour
         timeRemainingText.text = "Time Remaining: " + timeLeft;
         gameStatText.text = "";
         gameOperText.text = "";
+        slider.value = 1f;
     }
 
     // Update is called once per frame

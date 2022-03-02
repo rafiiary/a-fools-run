@@ -19,13 +19,10 @@ public class MoveChicken : MonoBehaviour
     // tune sensitivity of controls
     // original mass, drag, angularDrag: 1, 2, 0.05
     private float moveScale = 0.5f; // original 0.5
-    private float rotateScale = 3.0f; // unused
-    private float jumpScale = 4.0f; // original 1.6
-    private const float maxSpeed = 5.0f; // unused
+    private float jumpScale = 15.0f; // original 4.0 (using AddForce)
 
     // jump limiter
     private bool userJumped;
-    private bool jumpInProgress = false; // unused
     private float distanceToGround;
 
     // model components
@@ -141,12 +138,9 @@ public class MoveChicken : MonoBehaviour
         ChickenTransform.rotation = Quaternion.Lerp(ChickenTransform.rotation, Quaternion.Euler(userRotation), 0.3f);
 
         // let the character go forward
-        if (sprinting)
-        {
+        if (sprinting) {
           ChickenRigidbody.velocity += heading * inputScale * moveScale * 1.2f;
-        }
-        else
-        {
+        } else {
           ChickenRigidbody.velocity += heading * inputScale * moveScale;
         }
         // perform animations
@@ -155,7 +149,7 @@ public class MoveChicken : MonoBehaviour
 
         // only able to jump if you are on the ground
         if (isGrounded && userJumped) {
-            ChickenRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
+            ChickenRigidbody.velocity = Vector3.up * jumpScale;
         }
     }
 
@@ -185,7 +179,8 @@ public class MoveChicken : MonoBehaviour
     /** Send a raycast to check if player is grounded and returns true if
     the player is on some sort of ground */
     private bool IsGrounded() {
-        return Physics.Raycast(ChickenTransform.position, Vector3.down, distanceToGround - 0.3f);
+        // Debug.DrawRay(ChickenTransform.position, Vector3.down * 0.05f, Color.red);
+        return Physics.Raycast(ChickenTransform.position, Vector3.down, 0.05f);
     }
 
     public IEnumerator Slowed() {
