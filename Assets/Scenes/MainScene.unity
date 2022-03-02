@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1218,6 +1218,10 @@ PrefabInstance:
     - target: {fileID: 7074349349627482804, guid: d8c24dd766f1f454a89375fedac60a9e, type: 3}
       propertyPath: jumpingCollider
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7074349349627482804, guid: d8c24dd766f1f454a89375fedac60a9e, type: 3}
+      propertyPath: PlatformLayerMask.m_Bits
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7074349349627482805, guid: d8c24dd766f1f454a89375fedac60a9e, type: 3}
       propertyPath: m_Name
@@ -6937,7 +6941,7 @@ GameObject:
   - component: {fileID: 519933274}
   - component: {fileID: 519933273}
   - component: {fileID: 519933272}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14602,7 +14606,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh128972
+  m_Name: pb_Mesh22504
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -18599,6 +18603,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MainCamera: {fileID: 0}
   CameraTransform: {fileID: 0}
+  PlatformLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  HumanCollider: {fileID: 0}
   normalCollider: {fileID: 0}
 --- !u!54 &1552992528
 Rigidbody:

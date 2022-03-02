@@ -136,7 +136,8 @@ public class MoveDragon : MonoBehaviour
 
         // Only able to jump if you are on the ground
         if (IsGrounded() && userJumped) {
-            DragonRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
+            //DragonRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
+            DragonRigidbody.velocity = Vector3.up * jumpScale;
         }
     }
 
@@ -159,7 +160,7 @@ public class MoveDragon : MonoBehaviour
     /** Send a raycast to check if player is grounded and returns true if
     the player is on some sort of ground */
     private bool IsGrounded() {
-        return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.0f);
+        return Physics.Raycast(DragonTransform.position, Vector3.down, 0.05f);
     }
 
     void OnCollisionEnter(Collision collision) {
