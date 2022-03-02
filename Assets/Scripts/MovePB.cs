@@ -19,15 +19,12 @@ public class MovePB : MonoBehaviour
     // tune sensitivity of controls
     // original mass, drag, angularDrag: 1, 2, 0.05
     private float moveScale = 0.5f; // original 0.5
-    private float rotateScale = 3.0f; // unused
     private float jumpScale = 4.0f; // original 1.6
-    private const float maxSpeed = 5.0f; // unused
 
     // jump limiter
     [SerializeField] private LayerMask PlatformLayerMask;
     public Collider HumanCollider;
     private bool userJumped;
-    private bool jumpInProgress = false; // unused
     private float distanceToGround;
 
     // model components
@@ -162,7 +159,7 @@ public class MovePB : MonoBehaviour
 
         // only able to jump if you are on the ground
         if (isGrounded && userJumped) {
-            HumanRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
+            HumanRigidbody.velocity = Vector3.up * jumpScale;
         }
     }
 
@@ -185,21 +182,18 @@ public class MovePB : MonoBehaviour
     /** Send a raycast to check if player is grounded and returns true if
      the player is on some sort of ground */
     private bool IsGrounded() {
-        //return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.3f);
+        float extraHeight = 0.05f;
+        // bool hitGround = Physics.BoxCast(HumanCollider.bounds.center, HumanTransform.lossyScale, HumanTransform.up * -1, Quaternion.Euler(Vector3.zero), HumanTransform.lossyScale.y + extraHeight);
+        bool hitGround = Physics.Raycast(HumanTransform.position, Vector3.down, distanceToGround - 0.5f);
 
-        float extraHeight = 100f;
-        bool hitGround = Physics.BoxCast(HumanCollider.bounds.center, HumanTransform.lossyScale, HumanTransform.up * -1, Quaternion.Euler(Vector3.zero), HumanTransform.lossyScale.y + extraHeight);
-        
-        Debug.Log(HumanTransform.position);
         Color rayColor;
         if (hitGround) {
             rayColor = Color.green;
         } else {
             rayColor = Color.red;
         }
-
-        Debug.DrawRay(HumanTransform.position, Vector3.down * (HumanCollider.bounds.extents.y + extraHeight), rayColor);
-
+        
+        Debug.DrawRay(HumanTransform.position, Vector3.down * (distanceToGround - 0.5f), rayColor);
         return hitGround;
     }
 

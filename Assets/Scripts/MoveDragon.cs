@@ -19,13 +19,10 @@ public class MoveDragon : MonoBehaviour
     // tune sensitivity of controls
     // original mass, drag, angularDrag: 1, 2, 0.05
     private float moveScale = 0.5f; // original 0.5
-    private float rotateScale = 3.0f; // unused
     private float jumpScale = 4.0f; // original 1.6
-    private const float maxSpeed = 5.0f; // unused
 
     // jump limiter
     private bool userJumped;
-    private bool jumpInProgress = false; // unused
     private float distanceToGround;
       
     // model components
@@ -136,7 +133,6 @@ public class MoveDragon : MonoBehaviour
 
         // Only able to jump if you are on the ground
         if (IsGrounded() && userJumped) {
-            //DragonRigidbody.AddForce(Vector3.up * jumpScale, ForceMode.Impulse);
             DragonRigidbody.velocity = Vector3.up * jumpScale;
         }
     }
@@ -160,7 +156,8 @@ public class MoveDragon : MonoBehaviour
     /** Send a raycast to check if player is grounded and returns true if
     the player is on some sort of ground */
     private bool IsGrounded() {
-        return Physics.Raycast(DragonTransform.position, Vector3.down, 0.05f);
+        // Debug.DrawRay(DragonTransform.position, Vector3.down * (distanceToGround + 0.05f), Color.red);
+        return Physics.Raycast(DragonTransform.position, Vector3.down, distanceToGround + 0.05f);
     }
 
     void OnCollisionEnter(Collision collision) {

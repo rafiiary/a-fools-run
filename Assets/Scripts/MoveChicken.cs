@@ -179,6 +179,7 @@ public class MoveChicken : MonoBehaviour
     /** Send a raycast to check if player is grounded and returns true if
     the player is on some sort of ground */
     private bool IsGrounded() {
+        // Debug.DrawRay(ChickenTransform.position, Vector3.down * 0.05f, Color.red);
         return Physics.Raycast(ChickenTransform.position, Vector3.down, 0.05f);
     }
 
