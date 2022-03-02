@@ -24,6 +24,8 @@ public class MovePB : MonoBehaviour
     private const float maxSpeed = 5.0f; // unused
 
     // jump limiter
+    [SerializeField] private LayerMask PlatformLayerMask;
+    public Collider HumanCollider;
     private bool userJumped;
     private bool jumpInProgress = false; // unused
     private float distanceToGround;
@@ -45,6 +47,7 @@ public class MovePB : MonoBehaviour
         CameraTransform = MainCamera.GetComponent<Transform>();
         Animator = GetComponent<Animator>();
         distanceToGround = GetComponent<Collider>().bounds.extents.y;
+        HumanCollider = GetComponent<Collider>();
         // StartCoroutine(printStates());
     }
 
@@ -112,7 +115,6 @@ public class MovePB : MonoBehaviour
 
         // move 135 degrees right (press "S" + "D")
         } else if (Input.GetKey("s") && Input.GetKey("d")) {
-            Debug.Log("135 right!!!!!");
             userRotation[1] = cameraRotation[1];
             userRotation += new Vector3(0, 135, 0);
             heading = HumanTransform.forward;
@@ -120,7 +122,6 @@ public class MovePB : MonoBehaviour
 
         // move 135 degrees left (press "S" + "A")
         } else if (Input.GetKey("s") && Input.GetKey("a")) {
-            Debug.Log("135 left!!!!!");
             userRotation[1] = cameraRotation[1];
             userRotation += new Vector3(0, -135, 0);
             heading = HumanTransform.forward;
@@ -135,12 +136,9 @@ public class MovePB : MonoBehaviour
         HumanTransform.rotation = Quaternion.Lerp(HumanTransform.rotation, Quaternion.Euler(userRotation), 0.3f);
 
         // let the character go forward
-        if (sprinting)
-        {
+        if (sprinting) {
             HumanRigidbody.velocity += heading * inputScale * moveScale * 1.5f;
-        }
-        else
-        {
+        } else {
             HumanRigidbody.velocity += heading * inputScale * moveScale;
         }
 
@@ -176,10 +174,25 @@ public class MovePB : MonoBehaviour
     /** Send a raycast to check if player is grounded and returns true if
      the player is on some sort of ground */
     private bool IsGrounded() {
-        return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.3f);
+        //return Physics.Raycast(transform.position, Vector3.down, distanceToGround - 0.3f);
+
+        float extraHeight = 1f;
+        bool hitGround = Physics.BoxCast(HumanCollider.bounds.center, HumanCollider.bounds.extents, Vector3.down, Quaternion.Euler(Vector3.zero), HumanCollider.bounds.extents.y + extraHeight);
+        
+        Debug.Log(HumanTransform.position);
+        Color rayColor;
+        if (hitGround) {
+            rayColor = Color.green;
+        } else {
+            rayColor = Color.red;
+        }
+
+        Debug.DrawRay(HumanCollider.bounds.center, Vector3.down * (HumanCollider.bounds.extents.y + extraHeight), rayColor);
+
+        return hitGround;
     }
 
-    void OnCollisionEnter(Collision collision) {
+    private void OnCollisionEnter(Collision collision) {
         if (collision.collider.CompareTag("Obstacle")) {
             print("human collided with obstacle");
             StartCoroutine(Slowed());
