@@ -37,6 +37,7 @@ public class MoveChicken : MonoBehaviour
     bool movingForward;
     bool isGrounded;
     bool jumping;
+    bool sprinting;
 
     void Start() {
         ChickenRigidbody = GetComponent<Rigidbody>();
@@ -59,6 +60,7 @@ public class MoveChicken : MonoBehaviour
                           Input.GetKey("up") || Input.GetKey("down");
         isGrounded = IsGrounded();
         jumping = Input.GetKey("space");
+        sprinting = Input.GetKey(KeyCode.LeftShift);
     }
 
     private void FixedUpdate() {
@@ -66,7 +68,13 @@ public class MoveChicken : MonoBehaviour
         userRotation = ChickenTransform.rotation.eulerAngles;
         cameraRotation = CameraTransform.rotation.eulerAngles;
         inputScale = 0;
-        
+
+        Animator.SetBool("isWalking", movingForward);
+        Animator.SetBool("isJumping", jumping);
+        Animator.SetBool("isGrounded", isGrounded);
+        Animator.SetBool("isRunning", sprinting);
+        Animator.SetBool("isIdle", !movingForward && isGrounded);
+
         // move 90 degrees right (press only "D" or "D" + "W" + "S")
         if ((Input.GetKey("d") && !Input.GetKey("w") && !Input.GetKey("s")) || (Input.GetKey("d") && Input.GetKey("w") && Input.GetKey("s"))) {
             userRotation[1] = cameraRotation[1];
@@ -93,7 +101,7 @@ public class MoveChicken : MonoBehaviour
             userRotation += new Vector3(0, 180, 0);
             heading = ChickenTransform.forward;
             inputScale = Mathf.Abs(wsInput);
-        
+
         // move 45 degrees right (press "W" + "D")
         } else if (Input.GetKey("w") && Input.GetKey("d")) {
             userRotation[1] = cameraRotation[1];
@@ -128,36 +136,22 @@ public class MoveChicken : MonoBehaviour
         } else {
             inputScale = 0;
         }
-        
+
         // rotate character to the right direction
         ChickenTransform.rotation = Quaternion.Lerp(ChickenTransform.rotation, Quaternion.Euler(userRotation), 0.3f);
 
         // let the character go forward
-        ChickenRigidbody.velocity += heading * inputScale * moveScale;
-        
+        if (sprinting)
+        {
+          ChickenRigidbody.velocity += heading * inputScale * moveScale * 1.2f;
+        }
+        else
+        {
+          ChickenRigidbody.velocity += heading * inputScale * moveScale;
+        }
         // perform animations
         var norm = euclideanNorm(ChickenRigidbody.velocity.x, ChickenRigidbody.velocity.z);
-        Animator.SetFloat("velocity", norm);
-        if (movingForward && !jumping) {
-            Animator.SetBool("isIdle", false);
-            Animator.SetBool("isJumping", false);
-            Animator.SetBool("isWalking", true);
-        } else if (!movingForward && !jumping) {
-            Animator.SetBool("isWalking", false);
-            Animator.SetBool("isJumping", false);
-            Animator.SetBool("isIdle", true);
-        } else if (jumping) {
-            Animator.SetBool("isWalking", false);
-            Animator.SetBool("isIdle", false);
-            Animator.SetBool("isJumping", true);
-            Animator.SetBool("isGrounded", false);
-        } else if (isGrounded && !movingForward) {
-            Animator.SetBool("isIdle", true);
-            Animator.SetBool("isJumping", false);
-        } else if (isGrounded && movingForward) {
-            Animator.SetBool("isGrounded", true);
-            Animator.SetBool("isWalking", true);
-        }
+
 
         // only able to jump if you are on the ground
         if (isGrounded && userJumped) {
