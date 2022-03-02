@@ -15,7 +15,6 @@ public class UpdateScoreInfo : MonoBehaviour
     void Start()
     {
         _playerScoreText = playerScoreObj.GetComponent<Text>();
-        _playerScoreText.text = "Score: 0";
     }
 
     public void UpdateScoreImage(int score)

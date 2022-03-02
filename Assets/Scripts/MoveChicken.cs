@@ -18,7 +18,7 @@ public class MoveChicken : MonoBehaviour
 
     // tune sensitivity of controls
     // original mass, drag, angularDrag: 1, 2, 0.05
-    private float moveScale = 0.5f; // original 0.5
+    private float moveScale = 0.35f; // original 0.5
     private float jumpScale = 15.0f; // original 4.0 (using AddForce)
 
     // jump limiter
@@ -139,7 +139,7 @@ public class MoveChicken : MonoBehaviour
 
         // let the character go forward
         if (sprinting) {
-          ChickenRigidbody.velocity += heading * inputScale * moveScale * 1.2f;
+          ChickenRigidbody.velocity += heading * inputScale * moveScale * 1.1f;
         } else {
           ChickenRigidbody.velocity += heading * inputScale * moveScale;
         }
