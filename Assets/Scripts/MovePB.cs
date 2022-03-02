@@ -38,6 +38,7 @@ public class MovePB : MonoBehaviour
     bool isGrounded;
     bool jumping;
     bool sprinting;
+    bool hasFallen;
 
     void Start() {
         HumanRigidbody = GetComponent<Rigidbody>();
@@ -45,6 +46,7 @@ public class MovePB : MonoBehaviour
         CameraTransform = MainCamera.GetComponent<Transform>();
         Animator = GetComponent<Animator>();
         distanceToGround = GetComponent<Collider>().bounds.extents.y;
+        hasFallen = false;
         // StartCoroutine(printStates());
     }
 
@@ -68,7 +70,15 @@ public class MovePB : MonoBehaviour
         userRotation = HumanTransform.rotation.eulerAngles;
         cameraRotation = CameraTransform.rotation.eulerAngles;
         inputScale = 0;
-        
+
+        // perform animations
+        Animator.SetBool("isWalking", movingForward && !hasFallen);
+        Animator.SetBool("isJumping", jumping && !hasFallen);
+        Animator.SetBool("isGrounded", isGrounded && !hasFallen);
+        Animator.SetBool("isRunning", sprinting && !hasFallen);
+        Animator.SetBool("isIdle", !movingForward && isGrounded && !hasFallen);
+        Animator.SetBool("fallen", hasFallen);
+
         // move 90 degrees right (press only "D" or "D" + "W" + "S")
         if ((Input.GetKey("d") && !Input.GetKey("w") && !Input.GetKey("s")) || (Input.GetKey("d") && Input.GetKey("w") && Input.GetKey("s"))) {
             userRotation[1] = cameraRotation[1];
@@ -95,7 +105,7 @@ public class MovePB : MonoBehaviour
             userRotation += new Vector3(0, 180, 0);
             heading = HumanTransform.forward;
             inputScale = Mathf.Abs(wsInput);
-        
+
         // move 45 degrees right (press "W" + "D")
         } else if (Input.GetKey("w") && Input.GetKey("d")) {
             userRotation[1] = cameraRotation[1];
@@ -130,7 +140,7 @@ public class MovePB : MonoBehaviour
         } else {
             inputScale = 0;
         }
-        
+
         // rotate character to the right direction
         HumanTransform.rotation = Quaternion.Lerp(HumanTransform.rotation, Quaternion.Euler(userRotation), 0.3f);
 
@@ -144,12 +154,6 @@ public class MovePB : MonoBehaviour
             HumanRigidbody.velocity += heading * inputScale * moveScale;
         }
 
-        // perform animations
-        Animator.SetBool("isWalking", movingForward);
-        Animator.SetBool("isJumping", jumping);
-        Animator.SetBool("isGrounded", isGrounded);
-        Animator.SetBool("isRunning", sprinting);
-        Animator.SetBool("isIdle", !movingForward && isGrounded);
 
         // only able to jump if you are on the ground
         if (isGrounded && userJumped) {
@@ -189,8 +193,10 @@ public class MovePB : MonoBehaviour
     public IEnumerator Slowed() {
         print("Human will slow");
         moveScale = 0.1f;
+        hasFallen = true;
         print("Human slowed");
         yield return new WaitForSeconds(3);
+        hasFallen = false;
         print("waiting");
         moveScale = 0.5f; // original 0.5
         print("Human back to normal speed");
