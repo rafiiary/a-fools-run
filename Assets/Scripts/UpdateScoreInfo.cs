@@ -20,8 +20,9 @@ public class UpdateScoreInfo : MonoBehaviour
 
     public void UpdateScoreImage(int score)
     {
-        gemImages[score].GetComponent<RectTransform>().scale.x = 0.4;
-        gemImages[score].GetComponent<RectTransform>().scale.y = 0.7;
+        RectTransform rt;
+        rt = gemImages[score].GetComponent<RectTransform>();
+        rt.localScale = new Vector3 (0.4f, 0.7f, 1f);
         gemImages[score].GetComponent<RawImage>().texture = collectedGem;
     }
 
