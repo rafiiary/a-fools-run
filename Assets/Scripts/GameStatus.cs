@@ -16,6 +16,8 @@ public class GameStatus : MonoBehaviour
     private Text gameOperText;
 
     public float timeLeft = 90;
+    private float totalTime;
+    public Slider slider;
     public bool winStat = false;
     private Rigidbody _rigidbody;
 
@@ -27,6 +29,8 @@ public class GameStatus : MonoBehaviour
         timeRemainingText.text = "Time Remaining: " + timeLeft;
         gameStatText.text = "";
         gameOperText.text = "";
+        slider.value = 1f;
+        totalTime = timeLeft;
     }
 
     // Update is called once per frame
@@ -65,13 +69,7 @@ public class GameStatus : MonoBehaviour
     }
 
     void DisplayTime(float time) {
-        if (time < 0) {
-            time = 0;
-        } else {
-            float minutes = Mathf.FloorToInt(time / 60);
-            float seconds = Mathf.FloorToInt(time % 60);
-            timeRemainingText.text = "Time Remaining: " + string.Format("{0:00}:{1:00}", minutes, seconds);
-        }
+        slider.value = timeLeft / totalTime;
     }
 
     public void PauseGame(string type) {
