@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1311,6 +1311,10 @@ PrefabInstance:
       propertyPath: character3
       value: 
       objectReference: {fileID: 919132148059225078}
+    - target: {fileID: 6380341222349962012, guid: d8c24dd766f1f454a89375fedac60a9e, type: 3}
+      propertyPath: chickensquawk
+      value: 
+      objectReference: {fileID: 8300000, guid: add3e3b2f65fdc24daf4e1037ca55fdb, type: 3}
     - target: {fileID: 7074349349627482795, guid: d8c24dd766f1f454a89375fedac60a9e, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -19133,6 +19137,7 @@ MonoBehaviour:
   character2: {fileID: 1552992525}
   character3: {fileID: 0}
   hitpotion: {fileID: 0}
+  chickensquawk: {fileID: 0}
   camera: {fileID: 0}
   moveHuman: {fileID: 0}
   moveChicken: {fileID: 0}
@@ -25658,6 +25663,7 @@ MonoBehaviour:
   character2: {fileID: 72671345}
   character3: {fileID: 919132148059225078}
   hitpotion: {fileID: 8300000, guid: d52bcf49353bf944ab53bd021c585311, type: 3}
+  chickensquawk: {fileID: 8300000, guid: add3e3b2f65fdc24daf4e1037ca55fdb, type: 3}
   camera: {fileID: 66241055}
   moveHuman: {fileID: 0}
   moveChicken: {fileID: 0}
@@ -25834,6 +25840,10 @@ PrefabInstance:
       propertyPath: character3
       value: 
       objectReference: {fileID: 919132148059225078}
+    - target: {fileID: 2831215336790764572, guid: d8350b694559f3b4bb5d9af47b56c43e, type: 3}
+      propertyPath: chickensquawk
+      value: 
+      objectReference: {fileID: 8300000, guid: add3e3b2f65fdc24daf4e1037ca55fdb, type: 3}
     - target: {fileID: 3886333034428638136, guid: d8350b694559f3b4bb5d9af47b56c43e, type: 3}
       propertyPath: m_Avatar
       value: 
