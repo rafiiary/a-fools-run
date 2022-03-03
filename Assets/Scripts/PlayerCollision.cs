@@ -7,8 +7,6 @@ public class PlayerCollision : MonoBehaviour
   public GameObject character1;
   public GameObject character2;
   public GameObject character3;
-  public AudioClip hitpotion;
-  public AudioClip chickensquawk;
   public static bool hitFinishLine;
 
   public GameObject camera;
@@ -32,8 +30,6 @@ public class PlayerCollision : MonoBehaviour
   {
     print($"collision occured with {collision.collider.name}");
     if (collision.collider.CompareTag("Potion")) {
-      GetComponent<AudioSource>().clip = hitpotion;
-      GetComponent<AudioSource>().Play();
 
       collision.collider.gameObject.GetComponent<potionCollision>().Explode();
       if (character1.activeSelf) {
@@ -44,8 +40,6 @@ public class PlayerCollision : MonoBehaviour
         character2.SetActive(true);
         transform.parent.gameObject.GetComponent<Spawn>().setActivePlayer(character2);
         camera.GetComponent<CameraController>().PlayerTransform = character2.transform.Find("Focus");
-        GetComponent<AudioSource>().clip = chickensquawk;
-        GetComponent<AudioSource>().Play();
 
       } else if (character2.activeSelf) {
         print("Changing to character 3");
