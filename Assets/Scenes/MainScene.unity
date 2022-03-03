@@ -19135,7 +19135,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character1: {fileID: 265839101}
   character2: {fileID: 1552992525}
-  character3: {fileID: 0}
   camera: {fileID: 0}
   moveHuman: {fileID: 0}
   moveChicken: {fileID: 0}
@@ -25659,7 +25658,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character1: {fileID: 6209785972894237905}
   character2: {fileID: 72671345}
-  character3: {fileID: 919132148059225078}
   camera: {fileID: 66241055}
   moveHuman: {fileID: 0}
   moveChicken: {fileID: 0}
