@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class PlayerCollision : MonoBehaviour
 {
   public GameObject character1;
@@ -13,6 +14,10 @@ public class PlayerCollision : MonoBehaviour
   public MovePB moveHuman;
   public MoveChicken moveChicken;
   public MoveDragon moveDragon;
+
+  public AudioClip gem_collect;
+  public AudioClip chicken_squawk;
+  public AudioClip potion_hit;
 
   void Start()
   {
@@ -29,11 +34,22 @@ public class PlayerCollision : MonoBehaviour
   void OnCollisionEnter(Collision collision)
   {
     print($"collision occured with {collision.collider.name}");
+
+    if (collision.collider.CompareTag("Gem")) {
+             GetComponent<AudioSource>().clip = gem_collect;
+             GetComponent<AudioSource>().Play();
+    }
+    
     if (collision.collider.CompareTag("Potion")) {
 
       collision.collider.gameObject.GetComponent<potionCollision>().Explode();
+      GetComponent<AudioSource>().clip = potion_hit;
+      GetComponent<AudioSource>().Play();
+
       if (character1.activeSelf) {
         print("Changing to character 2");
+        GetComponent<AudioSource>().clip = chicken_squawk;
+        GetComponent<AudioSource>().Play();
         character2.transform.position = character1.transform.position;
         character2.transform.rotation = character1.transform.rotation;
         character1.SetActive(false);
