@@ -61,8 +61,7 @@ public class MovePB : MonoBehaviour
 
         // play animations according to keyboard inputs
         movingForward = Input.GetKey("w") || Input.GetKey("s") ||
-                          Input.GetKey("a") || Input.GetKey("d") ||
-                          Input.GetKey("up") || Input.GetKey("down");
+                          Input.GetKey("a") || Input.GetKey("d");
         isGrounded = IsGrounded();
         jumping = Input.GetKey("space");
         sprinting = Input.GetKey(KeyCode.LeftShift);
@@ -203,6 +202,7 @@ public class MovePB : MonoBehaviour
     private void OnCollisionEnter(Collision collision) {
         if (collision.collider.CompareTag("Obstacle")) {
             print("human collided with obstacle");
+            hasFallen = true;
             StartCoroutine(Slowed());
         }
     }
@@ -210,7 +210,6 @@ public class MovePB : MonoBehaviour
     public IEnumerator Slowed() {
         print("Human will slow");
         moveScale = 0.1f;
-        hasFallen = true;
         print("Human slowed");
         yield return new WaitForSeconds(3);
         hasFallen = false;

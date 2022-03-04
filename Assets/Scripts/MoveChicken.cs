@@ -56,8 +56,7 @@ public class MoveChicken : MonoBehaviour
 
         // play animations according to keyboard inputs
         movingForward = Input.GetKey("w") || Input.GetKey("s") ||
-                          Input.GetKey("a") || Input.GetKey("d") ||
-                          Input.GetKey("up") || Input.GetKey("down");
+                          Input.GetKey("a") || Input.GetKey("d");
         isGrounded = IsGrounded();
         jumping = Input.GetKey("space");
         sprinting = Input.GetKey(KeyCode.LeftShift);
@@ -149,8 +148,6 @@ public class MoveChicken : MonoBehaviour
         } else {
           ChickenRigidbody.velocity += heading * inputScale * moveScale;
         }
-        // perform animations
-        var norm = euclideanNorm(ChickenRigidbody.velocity.x, ChickenRigidbody.velocity.z);
 
 
         // only able to jump if you are on the ground
@@ -178,6 +175,8 @@ public class MoveChicken : MonoBehaviour
     void OnCollisionEnter(Collision collision) {
         if (collision.collider.CompareTag("Obstacle")) {
             print("chicken collided with obstacle");
+            hasFallen = true;
+            print("Fallen set to true");
             StartCoroutine(Slowed());
         }
     }
@@ -191,10 +190,7 @@ public class MoveChicken : MonoBehaviour
 
     public IEnumerator Slowed() {
         print("Chicken will slow");
-        ChickenRigidbody.AddForce(transform.up * 20f);
-        ChickenRigidbody.AddForce(transform.forward * 20f);
         moveScale = 0.1f;
-        hasFallen = true;
         print("Chicken slowed");
         yield return new WaitForSeconds(3);
         hasFallen = false;
