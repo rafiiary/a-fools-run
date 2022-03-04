@@ -60,6 +60,7 @@ public class MoveChicken : MonoBehaviour
         isGrounded = IsGrounded();
         jumping = Input.GetKey("space");
         sprinting = Input.GetKey(KeyCode.LeftShift);
+                Animator.SetBool("fallen", hasFallen);
     }
 
     private void FixedUpdate() {
@@ -73,7 +74,6 @@ public class MoveChicken : MonoBehaviour
         Animator.SetBool("isGrounded", isGrounded && !hasFallen);
         Animator.SetBool("isRunning", sprinting && !hasFallen);
         Animator.SetBool("isIdle", !movingForward && isGrounded && !hasFallen);
-        Animator.SetBool("fallen", hasFallen);
 
         if (!hasFallen)
         {
@@ -192,7 +192,7 @@ public class MoveChicken : MonoBehaviour
         print("Chicken will slow");
         moveScale = 0.1f;
         print("Chicken slowed");
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(2);
         hasFallen = false;
         print("waiting");
         moveScale = 0.5f; // original 0.5
