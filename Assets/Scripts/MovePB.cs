@@ -150,7 +150,7 @@ public class MovePB : MonoBehaviour
         HumanTransform.rotation = Quaternion.Lerp(HumanTransform.rotation, Quaternion.Euler(userRotation), 0.3f);
 
         // let the character go forward
-        if (sprinting) {
+        if (sprinting && !hasFallen) {
             HumanRigidbody.velocity += heading * inputScale * moveScale * 1.3f;
         } else {
             HumanRigidbody.velocity += heading * inputScale * moveScale;
@@ -158,7 +158,7 @@ public class MovePB : MonoBehaviour
 
 
         // only able to jump if you are on the ground
-        if (isGrounded && userJumped) {
+        if (isGrounded && userJumped && !hasFallen) {
             HumanRigidbody.velocity = Vector3.up * jumpScale;
         }
     }
