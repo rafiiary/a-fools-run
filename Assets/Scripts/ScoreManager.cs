@@ -19,4 +19,9 @@ public class ScoreManager : MonoBehaviour
         playerScore += 1;
         //scInfo.UpdateScoreText(playerScore);
     }
+
+    public int GetScore()
+    {
+        return playerScore;
+    }
 }

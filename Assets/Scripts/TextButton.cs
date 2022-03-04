@@ -31,10 +31,12 @@ public class TextButton : MonoBehaviour, IPointerClickHandler
 
         if (gameStatus.timeLeft > 0 & gameStatus.winStat == false)
         {
+            Debug.Log("Resuming!");
             gameStatus.ResumeGame();
         }
         else
         {
+            Debug.Log("Restarting!");
             gameStatus.RestartGame();
         }
     }
