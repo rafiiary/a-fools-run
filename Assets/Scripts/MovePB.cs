@@ -18,7 +18,7 @@ public class MovePB : MonoBehaviour
 
     // tune sensitivity of controls
     // original mass, drag, angularDrag: 1, 2, 0.05
-    private float moveScale = 0.45f; // original 0.5
+    private float moveScale = 0.6f; // original 0.5
     private float jumpScale = 8.0f; // original 4.0 (using AddForce)
 
     // jump limiter
@@ -61,8 +61,7 @@ public class MovePB : MonoBehaviour
 
         // play animations according to keyboard inputs
         movingForward = Input.GetKey("w") || Input.GetKey("s") ||
-                          Input.GetKey("a") || Input.GetKey("d") ||
-                          Input.GetKey("up") || Input.GetKey("down");
+                          Input.GetKey("a") || Input.GetKey("d");
         isGrounded = IsGrounded();
         jumping = Input.GetKey("space");
         sprinting = Input.GetKey(KeyCode.LeftShift);
@@ -150,7 +149,7 @@ public class MovePB : MonoBehaviour
         HumanTransform.rotation = Quaternion.Lerp(HumanTransform.rotation, Quaternion.Euler(userRotation), 0.3f);
 
         // let the character go forward
-        if (sprinting) {
+        if (sprinting && !hasFallen) {
             HumanRigidbody.velocity += heading * inputScale * moveScale * 1.3f;
         } else {
             HumanRigidbody.velocity += heading * inputScale * moveScale;
@@ -158,7 +157,7 @@ public class MovePB : MonoBehaviour
 
 
         // only able to jump if you are on the ground
-        if (isGrounded && userJumped) {
+        if (isGrounded && userJumped && !hasFallen) {
             HumanRigidbody.velocity = Vector3.up * jumpScale;
         }
     }
@@ -203,6 +202,7 @@ public class MovePB : MonoBehaviour
     private void OnCollisionEnter(Collision collision) {
         if (collision.collider.CompareTag("Obstacle")) {
             print("human collided with obstacle");
+            hasFallen = true;
             StartCoroutine(Slowed());
         }
     }
@@ -210,7 +210,6 @@ public class MovePB : MonoBehaviour
     public IEnumerator Slowed() {
         print("Human will slow");
         moveScale = 0.1f;
-        hasFallen = true;
         print("Human slowed");
         yield return new WaitForSeconds(3);
         hasFallen = false;
