@@ -10,16 +10,20 @@ public class GameStatus : MonoBehaviour
     public GameObject gameStatObj;
     public GameObject gameOperObj;
     public GameObject playerObj;
+    public ScoreManager scoreManager;
 
     private Text timeRemainingText;
     private Text gameStatText;
     private Text gameOperText;
 
     public float timeLeft = 90;
+    public int requiredScoreToWin = 6;
     private float totalTime;
     public Slider slider;
     public bool winStat = false;
     private Rigidbody _rigidbody;
+
+    private const string CollectMoreGemsMessage = "Collect more gems and come back!";
 
     // Start is called before the first frame update
     void Start() {
@@ -46,9 +50,16 @@ public class GameStatus : MonoBehaviour
         // Check if player has reached end of the maze
         for (int i=0; i<playerObj.transform.childCount; i++) {
             GameObject childObj = playerObj.transform.GetChild(i).gameObject;
-            if (PlayerCollision.hitFinishLine) {
+            if (PlayerCollision.hitFinishLine && scoreManager.GetScore() >= requiredScoreToWin)
+            {
                 winStat = true;
-            }
+                }
+                // else if (PlayerCollision.hitFinishLine)
+                // {
+                //     DisplayMessage(gameStatText, CollectMoreGemsMessage);
+                //     StartCoroutine(ClearMessageAfterDelay(gameStatText, 2));
+                //     
+                // }
         }
         if (winStat == true) {
             PauseGame("win");
@@ -67,7 +78,7 @@ public class GameStatus : MonoBehaviour
             }
         }
     }
-
+    
     void DisplayTime(float time) {
         slider.value = timeLeft / totalTime;
     }
@@ -100,8 +111,9 @@ public class GameStatus : MonoBehaviour
         gameOperText.text = "";
         winStat = false;
     }
-
+    
     public void DisplayMessage(Text textArea, string message) {
+        // TODO: refactor this function to just check membership of an Enum of all the messages.
         if (message == "Game Over!") {
             textArea.text = "Game Over!";
         } else if (message == "Game Paused") {
@@ -112,8 +124,22 @@ public class GameStatus : MonoBehaviour
             textArea.text = "You Win!";
         } else if (message == "Restart") {
             textArea.text = "Restart";
-        } else {
+        } else if (message == CollectMoreGemsMessage)
+        {
+            textArea.text = CollectMoreGemsMessage;
+        }else {
             textArea.text = "ERROR: Unknown input!";
         }
+    }
+
+    public void ClearMessage(Text textArea)
+    {
+        textArea.text = "";
+    }
+    
+    IEnumerator ClearMessageAfterDelay(Text textArea, float delaySeconds)
+    {
+        yield return new WaitForSeconds(delaySeconds);
+        ClearMessage(textArea);
     }
 }
