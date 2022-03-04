@@ -1,0 +1,24 @@
+newmtl dragonFoolMar3VerFour:Material_002
+illum 4
+Kd 0.45 0.00 0.01
+Ka 1.00 1.00 1.00
+Tf 1.00 1.00 1.00
+Ni 1.45
+Ks 0.50 0.50 0.50
+Ns 225.00
+newmtl dragonFoolMar3VerFour:Material_003
+illum 4
+Kd 0.56 0.34 0.00
+Ka 1.00 1.00 1.00
+Tf 1.00 1.00 1.00
+Ni 1.45
+Ks 0.50 0.50 0.50
+Ns 225.00
+newmtl dragonFoolMar3VerFour:_material00
+illum 4
+Kd 0.00 0.06 0.00
+Ka 1.00 1.00 1.00
+Tf 1.00 1.00 1.00
+Ni 1.45
+Ks 0.50 0.50 0.50
+Ns 225.00
