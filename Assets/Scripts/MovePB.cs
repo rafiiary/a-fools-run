@@ -18,7 +18,7 @@ public class MovePB : MonoBehaviour
 
     // tune sensitivity of controls
     // original mass, drag, angularDrag: 1, 2, 0.05
-    private float moveScale = 0.45f; // original 0.5
+    private float moveScale = 0.6f; // original 0.5
     private float jumpScale = 8.0f; // original 4.0 (using AddForce)
 
     // jump limiter
