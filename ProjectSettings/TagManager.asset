@@ -8,6 +8,7 @@ TagManager:
   - FinishLine
   - Obstacle
   - Gem
+  - Physics
   layers:
   - Default
   - TransparentFX
