@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7074349349627482804}
   - component: {fileID: 8536502824107370900}
   - component: {fileID: 6380341222349962012}
+  - component: {fileID: 2506106911865047822}
   m_Layer: 0
   m_Name: Human
   m_TagString: Player
@@ -69,6 +70,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   HumanCollider: {fileID: 0}
+  normalCollider: {fileID: 0}
 --- !u!95 &8536502824107370900
 Animator:
   serializedVersion: 3
@@ -102,12 +104,109 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   character1: {fileID: 0}
   character2: {fileID: 7074349349627482805}
-  character3: {fileID: 0}
-  hitpotion: {fileID: 0}
   camera: {fileID: 0}
   moveHuman: {fileID: 0}
   moveChicken: {fileID: 0}
   moveDragon: {fileID: 0}
+  gem_collect: {fileID: 0}
+  chicken_squawk: {fileID: 0}
+  potion_hit: {fileID: 0}
+--- !u!82 &2506106911865047822
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7074349349627482805}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &5221718719275777032
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -171,6 +270,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -4083356567671911049, guid: 1f5154163eb4e3848957f0f676cf2db5, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 722c62aad71f1234ca18133bda0167bf, type: 2}
     - target: {fileID: 919132149155446097, guid: 1f5154163eb4e3848957f0f676cf2db5, type: 3}
       propertyPath: m_Name
       value: humanFoolsRunTwo
